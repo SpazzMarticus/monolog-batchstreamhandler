@@ -33,13 +33,13 @@ class BatchStreamHandler extends AbstractProcessingHandler
      * (Optional) Head lines
      * @var array
      */
-    protected $envelopeHead = [];
+    protected $envelopeHead = array();
 
     /**
      * (Optional) Foot lines
      * @var array
      */
-    protected $envelopeFoot = [];
+    protected $envelopeFoot = array();
     protected $bufferedText = '';
 
     /**
@@ -135,7 +135,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
                 }
                 $this->createDir();
                 $this->errorMessage = null;
-                set_error_handler([$this, 'customErrorHandler']);
+                set_error_handler(array($this, 'customErrorHandler'));
                 $this->stream = fopen($this->url, 'a');
                 if ($this->filePermission !== null) {
                     @chmod($this->url, $this->filePermission);
@@ -191,7 +191,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
         $dir = $this->getDirFromStream($this->url);
         if (null !== $dir && !is_dir($dir)) {
             $this->errorMessage = null;
-            set_error_handler([$this, 'customErrorHandler']);
+            set_error_handler(array($this, 'customErrorHandler'));
             $status = mkdir($dir, 0777, true);
             restore_error_handler();
             if (false === $status) {

@@ -13,15 +13,15 @@ class BatchStreamHandlerTest extends TestCase
         $handle = fopen('php://memory', 'a+');
         $handler = new BatchStreamHandler($handle);
         $handler->pushHeadLine('head1');
-        $handler->pushHeadLines(['head2', 'head3']);
+        $handler->pushHeadLines(array('head2', 'head3'));
         $handler->pushFootLine('foot1');
-        $handler->pushFootLines(['foot2', 'foot3']);
+        $handler->pushFootLines(array('foot2', 'foot3'));
         $handler->setFormatter($this->getIdentityFormatter());
-        $handler->handleBatch([
+        $handler->handleBatch(array(
             $this->getRecord(Logger::WARNING, 'test'),
             $this->getRecord(Logger::WARNING, 'test2'),
             $this->getRecord(Logger::WARNING, 'test3')
-        ]);
+        ));
         fseek($handle, 0);
         $this->assertEquals("head1\nhead2\nhead3\ntesttest2test3foot1\nfoot2\nfoot3\n", stream_get_contents($handle));
     }
@@ -57,7 +57,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testClose()
     {
         $handler = new BatchStreamHandler('php://memory');
-        $handler->handleBatch([$this->getRecord(Logger::WARNING, 'test')]);
+        $handler->handleBatch(array($this->getRecord(Logger::WARNING, 'test')));
         $stream = $handler->getStream();
         $this->assertTrue(is_resource($stream));
         $handler->close();
@@ -70,7 +70,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteCreatesTheStreamResource()
     {
         $handler = new BatchStreamHandler('php://memory');
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -81,7 +81,7 @@ class BatchStreamHandlerTest extends TestCase
     {
         $temp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'monolog_locked_log';
         $handler = new BatchStreamHandler($temp, Logger::DEBUG, true, null, true);
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -92,16 +92,16 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteMissingResource()
     {
         $handler = new BatchStreamHandler(null);
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     public function invalidArgumentProvider()
     {
-        return [
-            [1],
-            [[]],
-            [['bogus://url']],
-        ];
+        return array(
+            array(1),
+            array(array()),
+            array(array('bogus://url')),
+        );
     }
 
     /**
@@ -122,7 +122,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteInvalidResource()
     {
         $handler = new BatchStreamHandler('bogus://url');
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -133,7 +133,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteNonExistingResource()
     {
         $handler = new BatchStreamHandler('ftp://foo/bar/baz/' . rand(0, 10000));
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -143,7 +143,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteNonExistingPath()
     {
         $handler = new BatchStreamHandler(sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -153,7 +153,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWriteNonExistingFileResource()
     {
         $handler = new BatchStreamHandler('file://' . sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -168,7 +168,7 @@ class BatchStreamHandlerTest extends TestCase
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
         $handler = new BatchStreamHandler('/foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
@@ -183,6 +183,6 @@ class BatchStreamHandlerTest extends TestCase
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
         $handler = new BatchStreamHandler('file:///foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
-        $handler->handleBatch([$this->getRecord()]);
+        $handler->handleBatch(array($this->getRecord()));
     }
 }
