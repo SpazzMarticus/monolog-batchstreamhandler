@@ -117,7 +117,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
 
     public function handle(array $record)
     {
-        throw new \Exception('You must only use handleBatch on ' . self::class . '!');
+        throw new \Exception('You must only use handleBatch on this handler!');
     }
 
     protected function write(array $record)
