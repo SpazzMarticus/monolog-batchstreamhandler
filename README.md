@@ -2,7 +2,7 @@
 
 A [Monolog](https://github.com/Seldaek/monolog) handler that takes a batch of records and pushes them to a stream **at once**.
 
-[![Build Status](https://travis-ci.org/SpazzMarticus/monolog-batchstreamhandler.svg?branch=master)](https://travis-ci.org/SpazzMarticus/monolog-batchstreamhandler)
+[![Build Status](https://travis-ci.org/SpazzMarticus/monolog-batchstreamhandler.svg?branch=master)](https://travis-ci.org/SpazzMarticus/monolog-batchstreamhandler) [![Code Climate](https://codeclimate.com/github/SpazzMarticus/monolog-batchstreamhandler/badges/gpa.svg)](https://codeclimate.com/github/SpazzMarticus/monolog-batchstreamhandler)
 
 ## Why
 
