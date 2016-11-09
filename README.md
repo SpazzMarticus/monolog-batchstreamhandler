@@ -8,6 +8,14 @@ A [Monolog](https://github.com/Seldaek/monolog) handler that takes a batch of re
 
 When logging calls to webservers I like all log records of one call grouped together. I changed the default `StreamHandler` to handle only batches of records (`handleBatch`) and write them to the stream at once - voilà the `BatchStreamHandler`.
 
+## Installation
+
+Install with
+
+```
+composer require spazzmarticus/monolog-batchstreamhandler
+```
+
 ## Usage
 
 ```php
