@@ -11,7 +11,7 @@ class BatchStreamHandlerTest extends TestCase
     public function testWrite()
     {
         $handle = fopen('php://memory', 'a+');
-        $handler = new BatchStreamHandler($handle);
+        $handler = new BatchStreamHandler($handle, Logger::WARNING);
         $handler->pushHeadLine('head1');
         $handler->pushHeadLines(array('head2', 'head3'));
         $handler->pushFootLine('foot1');
@@ -24,6 +24,24 @@ class BatchStreamHandlerTest extends TestCase
         ));
         fseek($handle, 0);
         $this->assertEquals("head1\nhead2\nhead3\ntesttest2test3foot1\nfoot2\nfoot3\n", stream_get_contents($handle));
+    }
+
+    public function testDontWriteIfNoRecordsAreProcessed()
+    {
+        $handle = fopen('php://memory', 'a+');
+        $handler = new BatchStreamHandler($handle, Logger::CRITICAL);
+        $handler->pushHeadLine('head1');
+        $handler->pushHeadLines(array('head2', 'head3'));
+        $handler->pushFootLine('foot1');
+        $handler->pushFootLines(array('foot2', 'foot3'));
+        $handler->setFormatter($this->getIdentityFormatter());
+        $handler->handleBatch(array(
+            $this->getRecord(Logger::WARNING, 'test'),
+            $this->getRecord(Logger::WARNING, 'test2'),
+            $this->getRecord(Logger::WARNING, 'test3')
+        ));
+        fseek($handle, 0);
+        $this->assertEquals("", stream_get_contents($handle));
     }
 
     /**
@@ -63,7 +81,7 @@ class BatchStreamHandlerTest extends TestCase
         $handler->close();
         $this->assertFalse(is_resource($stream));
     }
-    
+
     /**
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */

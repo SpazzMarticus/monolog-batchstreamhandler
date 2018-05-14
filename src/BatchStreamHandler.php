@@ -103,13 +103,14 @@ class BatchStreamHandler extends AbstractProcessingHandler
      */
     public function handleBatch(array $records)
     {
-        $this->bufferedText.= implode("\n", $this->envelopeHead) . "\n";
-
         foreach ($records as $record) {
             parent::handle($record);
         }
 
-        $this->bufferedText.= implode("\n", $this->envelopeFoot) . "\n";
+        //Add header/footer only if records are processed, to prevent log containing only header/footer
+        if (strlen($this->bufferedText) > 0) {
+            $this->bufferedText = implode("\n", $this->envelopeHead) . "\n" . $this->bufferedText . implode("\n", $this->envelopeFoot) . "\n";
+        }
 
         $this->writeToStream();
         $this->bufferedText = '';
