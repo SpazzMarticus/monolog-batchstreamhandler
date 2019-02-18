@@ -34,10 +34,6 @@ $bufferHandler = new BufferHandler($batchStreamHandler);
 $logger = new Logger('supsi');
 $logger->pushHandler($bufferHandler);
 
-register_shutdown_function(function() use ($bufferHandler) {
-    $bufferHandler->flush();
-});
-
 //PewPew - Do your stuff here
 ```
 
