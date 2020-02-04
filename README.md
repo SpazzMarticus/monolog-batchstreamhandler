@@ -2,6 +2,8 @@
 
 A [Monolog](https://github.com/Seldaek/monolog) handler that takes a batch of records and pushes them to a stream **at once**.
 
+(Use ^2.0 or Monolog ^2.0 and ^1.0 for Monolog ^1.x)
+
 ## Why
 
 When logging calls to webservers I like all log records of one call grouped together. I changed the default `StreamHandler` to handle only batches of records (`handleBatch`) and write them to the stream at once - voilà the `BatchStreamHandler`.
