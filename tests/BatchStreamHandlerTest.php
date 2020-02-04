@@ -2,10 +2,9 @@
 
 namespace SpazzMarticus\Monolog\Handler;
 
-use Monolog\TestCase;
 use Monolog\Logger;
 
-class BatchStreamHandlerTest extends TestCase
+class BatchStreamHandlerTest extends \Monolog\Test\TestCase
 {
 
     public function testWrite()
@@ -44,13 +43,13 @@ class BatchStreamHandlerTest extends TestCase
         $this->assertEquals("", stream_get_contents($handle));
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testExceptionWhenCallingHandle()
     {
         $handle = fopen('php://memory', 'a+');
         $handler = new BatchStreamHandler($handle);
+
+        $this->expectException(\Exception::class);
+
         $handler->handle($this->getRecord());
     }
     /**
@@ -89,6 +88,8 @@ class BatchStreamHandlerTest extends TestCase
     {
         $handler = new BatchStreamHandler('php://memory');
         $handler->handleBatch(array($this->getRecord()));
+
+        $this->addToAssertionCount(1); //No exception is a success
     }
 
     /**
@@ -100,15 +101,18 @@ class BatchStreamHandlerTest extends TestCase
         $temp = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'monolog_locked_log';
         $handler = new BatchStreamHandler($temp, Logger::DEBUG, true, null, true);
         $handler->handleBatch(array($this->getRecord()));
+
+        $this->addToAssertionCount(1); //No exception is a success
     }
 
     /**
-     * @expectedException LogicException
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */
     public function testWriteMissingResource()
     {
+        $this->expectException(\LogicException::class);
+
         $handler = new BatchStreamHandler(null);
         $handler->handleBatch(array($this->getRecord()));
     }
@@ -124,33 +128,38 @@ class BatchStreamHandlerTest extends TestCase
 
     /**
      * @dataProvider invalidArgumentProvider
-     * @expectedException InvalidArgumentException
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      */
     public function testWriteInvalidArgument($invalidArgument)
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $handler = new BatchStreamHandler($invalidArgument);
     }
 
     /**
-     * @expectedException UnexpectedValueException
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */
     public function testWriteInvalidResource()
     {
         $handler = new BatchStreamHandler('bogus://url');
+
+        $this->expectException(\UnexpectedValueException::class);
+
         $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
-     * @expectedException UnexpectedValueException
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */
     public function testWriteNonExistingResource()
     {
         $handler = new BatchStreamHandler('ftp://foo/bar/baz/' . rand(0, 10000));
+
+        $this->expectException(\UnexpectedValueException::class);
+
         $handler->handleBatch(array($this->getRecord()));
     }
 
@@ -162,6 +171,8 @@ class BatchStreamHandlerTest extends TestCase
     {
         $handler = new BatchStreamHandler(sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handleBatch(array($this->getRecord()));
+
+        $this->addToAssertionCount(1); //No exception is a success
     }
 
     /**
@@ -172,11 +183,11 @@ class BatchStreamHandlerTest extends TestCase
     {
         $handler = new BatchStreamHandler('file://' . sys_get_temp_dir() . '/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
         $handler->handleBatch(array($this->getRecord()));
+
+        $this->addToAssertionCount(1); //No exception is a success
     }
 
     /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /There is no existing directory at/
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */
@@ -186,12 +197,14 @@ class BatchStreamHandlerTest extends TestCase
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
         $handler = new BatchStreamHandler('/foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/There is no existing directory at/');
+
         $handler->handleBatch(array($this->getRecord()));
     }
 
     /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /There is no existing directory at/
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::__construct
      * @covers SpazzMarticus\Monolog\Handler\BatchStreamHandler::write
      */
@@ -201,6 +214,10 @@ class BatchStreamHandlerTest extends TestCase
             $this->markTestSkipped('Permissions checks can not run on windows');
         }
         $handler = new BatchStreamHandler('file:///foo/bar/' . rand(0, 10000) . DIRECTORY_SEPARATOR . rand(0, 10000));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/There is no existing directory at/');
+
         $handler->handleBatch(array($this->getRecord()));
     }
 }

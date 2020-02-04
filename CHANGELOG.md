@@ -1,4 +1,7 @@
-# Changelog
+# Unreleased
+
+## Changed
+- `Monolog`-Version from 1.x to **2.x**
 
 # 1.1.0
 

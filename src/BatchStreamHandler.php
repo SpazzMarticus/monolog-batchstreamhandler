@@ -69,7 +69,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
     /**
      * {@inheritdoc}
      */
-    public function close()
+    public function close(): void
     {
         if ($this->url && is_resource($this->stream)) {
             fclose($this->stream);
@@ -101,7 +101,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
      * Envelops the given batch of records and calls the next handler
      * @param array $records
      */
-    public function handleBatch(array $records)
+    public function handleBatch(array $records): void
     {
         foreach ($records as $record) {
             parent::handle($record);
@@ -116,14 +116,14 @@ class BatchStreamHandler extends AbstractProcessingHandler
         $this->bufferedText = '';
     }
 
-    public function handle(array $record)
+    public function handle(array $record): bool
     {
         throw new \Exception('You must only use handleBatch on this handler!');
     }
 
-    protected function write(array $record)
+    protected function write(array $record): void
     {
-        $this->bufferedText.=(string) $record['formatted'];
+        $this->bufferedText .= (string) $record['formatted'];
     }
 
     protected function writeToStream()
@@ -132,7 +132,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
             if (!is_resource($this->stream)) {
                 if (null === $this->url || '' === $this->url) {
                     throw new \LogicException('Missing stream url, the stream can not be opened.'
-                    . ' This may be caused by a premature call to close().');
+                        . ' This may be caused by a premature call to close().');
                 }
                 $this->createDir();
                 $this->errorMessage = null;
@@ -145,7 +145,7 @@ class BatchStreamHandler extends AbstractProcessingHandler
                 if (!is_resource($this->stream)) {
                     $this->stream = null;
                     throw new \UnexpectedValueException(sprintf('The stream or file "%s" could not be opened: '
-                        . $this->errorMessage, $this->url));
+                            . $this->errorMessage, $this->url));
                 }
             }
             if ($this->useLocking) {
