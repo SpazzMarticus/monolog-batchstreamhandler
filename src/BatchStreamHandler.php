@@ -3,6 +3,7 @@
 namespace SpazzMarticus\Monolog\Handler;
 
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Monolog\Handler\AbstractProcessingHandler;
 
 /**
@@ -18,7 +19,6 @@ use Monolog\Handler\AbstractProcessingHandler;
  */
 class BatchStreamHandler extends AbstractProcessingHandler
 {
-
     /** @var resource|null */
     protected $stream;
     protected $url;
@@ -116,12 +116,12 @@ class BatchStreamHandler extends AbstractProcessingHandler
         $this->bufferedText = '';
     }
 
-    public function handle(array $record): bool
+    public function handle(LogRecord $record): bool
     {
         throw new \Exception('You must only use handleBatch on this handler!');
     }
 
-    protected function write(array $record): void
+    protected function write(LogRecord $record): void
     {
         $this->bufferedText .= (string) $record['formatted'];
     }

@@ -6,7 +6,6 @@ use Monolog\Logger;
 
 class BatchStreamHandlerTest extends \Monolog\Test\TestCase
 {
-
     public function testWrite()
     {
         $handle = fopen('php://memory', 'a+');
